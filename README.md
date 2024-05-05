@@ -47,7 +47,10 @@ Run ImageProcessor to get regions of interest (roi)
     frame, rois = image_processor.select_objects()
 
 It looks like:
+
+
 ![roi.jpeg](Screenshots%2Froi.jpeg)
+
 
 Then create objects that you want to digitize. Now it can be bulbs or just number panels (including float numbers like 18.1).
 Here You should point name, roi, init_value, frame and type. Type will be used in gui representation
@@ -74,7 +77,9 @@ And run the run managing loop
 
 If you do everything right, You will see such screen:
 
+
 ![two_status_data.jpeg](Screenshots%2Ftwo_status_data.jpeg)
+
 
 ## TelegramApi and Notificator
 You can create your own notifications. In the case of some Dangerous situation you will get message in Telegram.
