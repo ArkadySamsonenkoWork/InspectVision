@@ -1,6 +1,9 @@
-# InpectVision - Software for monitoring device readings in real time by analyzing camera data.
+# InpectVision
+Software for monitoring device readings in real time by analyzing camera data.
 ![image.jpeg](Screenshots%2Fimage.jpeg)
+
 The program takes an instrument panel as input and returns its “digital” representation
+
 ![result.png](Screenshots%2Fresult.jpeg)
 ## Contents
   - [Requirements]
@@ -70,6 +73,7 @@ And run the run managing loop
     monitor.run_loop(controlled_objects, show=True, telegram_api=None, log_path=path, log_every=2)
 
 If you do everything right, You will see such screen:
+
 ![two_status_data.jpeg](Screenshots%2Ftwo_status_data.jpeg)
 
 ## TelegramApi and Notificator
