@@ -1,0 +1,25 @@
+[build-system]
+    requires = ["setuptools", "setuptools-scm"]
+    build-backend = "setuptools.build_meta"
+
+[project]
+    name = "InspectVision"
+    version = "0.1_b"
+    description = "A library for monitoring detectors, sensors and digitizing data from them"
+    authors = [
+      {name="Arkady Samsonenko", email="a.samsonenko@tomo.nsc.ru"},
+    ]
+    readme = "README.md"
+    classifiers = [
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ]
+
+[tool.pip-compile]
+    dependencies = [
+        "aiogramm",
+        "open-cv",
+        "numpy",
+        "onnxruntime",
+    ]
