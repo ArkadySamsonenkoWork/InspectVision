@@ -1,7 +1,7 @@
 # InpectVision - Software for monitoring device readings in real time by analyzing camera data.
 ![image.jpeg](Screenshots%2Fimage.jpeg)
 The program takes an instrument panel as input and returns its “digital” representation
-![result.png](Screenshots%2Fresult.png)
+![result.png](Screenshots%2Fresult.jpeg)
 ## Contents
   - [Requirements]
   - [Basic usage]
