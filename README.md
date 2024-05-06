@@ -1,7 +1,11 @@
 # InpectVision - Software for monitoring device readings in real time by analyzing camera data.
 ![image.jpeg](Screenshots%2Fimage.jpeg)
+
 The program takes an instrument panel as input and returns its “digital” representation
+
 ![result.png](Screenshots%2Fresult.jpeg)
+
+
 ## Contents
   - [Requirements]
   - [Basic usage]
@@ -46,7 +50,10 @@ Select regions of interest (roi):
     frame, rois = image_processing.select_roi(image_processor)
 
 It looks like:
+
+
 ![roi.jpeg](Screenshots%2Froi.jpeg)
+
 
 Then create objects that you want to digitize. Now it can be bulbs or just number panels (including float numbers like 18.1).
 Here You should point name, roi, init_value, frame and type. Type will be used in gui representation
@@ -76,7 +83,11 @@ And run the run managing loop
     monitor.run_loop(controlled_objects, show=True, telegram_api=None, log_path=path, log_every=2)
 
 If you do everything right, You will see such screen:
+
+
 ![two_status_data.jpeg](Screenshots%2Ftwo_status_data.jpeg)
+
+
 
 ## TelegramApi and Notificator
 You can create your own notifications. In the case of some Dangerous situation you will get message in Telegram.
@@ -106,12 +117,16 @@ And the pass this to monitor:
 ## Available Panels
 ### Seven-segments number panels
 
+
 ![images](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/6921fa36-3ab3-44bd-a2ba-4c1d28ec3410)
+
 
  ### Binary status bulbs
 
+
  ![bulb](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/6f9cf3ed-d098-4565-a518-8a4f06905ba9)
 
+ 
 
 ## Writing Your Own Models
 To write your own model you should create class inheritor from class control_objects
