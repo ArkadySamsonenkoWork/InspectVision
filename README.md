@@ -21,7 +21,7 @@ The program takes an instrument panel as input and returns its “digital” rep
   - [Writing Own Models]
 
 ## Requirements
-  - [Python (3.10+)]
+  - [Python (3.9+)]
   - [OnnxRuntime] for running natural network models 
   - [OpenCV]
   - [Numpy]
@@ -56,7 +56,7 @@ It looks like:
 
 
 Then create objects that you want to digitize. Now it can be bulbs or just number panels (including float numbers like 18.1).
-Here You should point name, roi, init_value, frame and type. Type will be used in gui representation
+Here, you should point name, roi, init_value, frame and type. Type will be used in gui representation.
 
         controlled_objects = []
         controlled_objects.append(
@@ -68,17 +68,17 @@ Here You should point name, roi, init_value, frame and type. Type will be used i
             control_objects.Bulb(name="bulb_2", coordinates=rois[1],
                                       init_value=0, frame=frame, gui_type=gui.WidgetType.Binary)
         )
+	
 To see all available gui types, you can just print it directly:
 
         print(gui.WidgetType)
 
-Create monitor which will manage the objects digitizing
+Create monitor which manages the objects digitizing
 
-    monitor = objects_handler.Monitor(camera_id=0)
+    monitor = objects_handler.Monitor(image_processor))
 
-And run the run managing loop
+And run the loop.
 
-    monitor = objects_handler.Monitor(image_processor)
     path = "data"
     monitor.run_loop(controlled_objects, show=True, telegram_api=None, log_path=path, log_every=2)
 
@@ -90,15 +90,15 @@ If you do everything right, You will see such screen:
 
 
 ## TelegramApi and Notificator
-You can create your own notifications. In the case of some Dangerous situation you will get message in Telegram.
-To do this, import Base class Notificator and create its inheritor with method check_conditions
+You can create your own notifications. In the case of some dangerous situation you will get message in Telegram.
+To do this, import Base class Notificator and create its sublass with method check_conditions
 
     from InpectVison.data_logging import Notificator
 
     class ChillerNotificator(Notificator):
         def check_conditions(self):
             condition = self.controlled_objects[0] > 17.8
-            message = "The water temerature is hight!!!!!"
+            message = "The water temerature is too hight!!!!!"
             return condition, message
 
 And then in code create your notificator:
@@ -110,7 +110,7 @@ Then create your own telegram api:
     from InpectVison.data_logging import TelegramApi
     telegram_api = TelegramApi(token="some_toke_from_BotFather", notificator=notificator)
 
-And the pass this to monitor:
+And pass this to monitor:
 
     monitor.run_loop(controlled_objects, show=True, telegram_api=telegram_api, log_path=path, log_every=2)
     
