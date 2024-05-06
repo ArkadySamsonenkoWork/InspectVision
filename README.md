@@ -108,10 +108,6 @@ And the pass this to monitor:
 
 ![images](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/6921fa36-3ab3-44bd-a2ba-4c1d28ec3410)
 
-![hEzCp](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/fb4ee765-4ab8-4286-bfa9-2562184d750b)
-
-![865-00](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/7bb54af8-577a-4c24-bdc6-1daafbdf47d7)
-
  ### Binary status bulbs
 
  ![bulb](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/6f9cf3ed-d098-4565-a518-8a4f06905ba9)
