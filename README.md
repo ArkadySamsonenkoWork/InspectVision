@@ -1,10 +1,7 @@
-# InpectVision
-Software for monitoring device readings in real time by analyzing camera data.
+# InpectVision - Software for monitoring device readings in real time by analyzing camera data.
 ![image.jpeg](Screenshots%2Fimage.jpeg)
-
 The program takes an instrument panel as input and returns its “digital” representation
-
-![result.png](Screenshots%2Fresult.jpeg)
+![result.png](Screenshots%2Fresult.png)
 ## Contents
   - [Requirements]
   - [Basic usage]
@@ -34,37 +31,39 @@ Install from the source directory:
 
 	pip3 install -e .
 
-Import everything you need
+Import everything you need:
 
-    from InpectVison import control_objects
-    from InpectVison import objects_handler
-    from InpectVison.processing import image_processing
-    from InpectVison.data_logging import Notificator, TelegramApi
+    from InspectVision import gui, control_objects, objects_handler
+    from InspectVision.processing import image_processing
+    from InspectVision.data_logging import Notificator, TelegramApi
 
-Run ImageProcessor to get regions of interest (roi)
+Run ImageProcessor that will handle your camera:
 
     image_processor = image_processing.ImageProcessor(0)
-    frame, rois = image_processor.select_objects()
+
+Select regions of interest (roi):
+
+    frame, rois = image_processing.select_roi(image_processor)
 
 It looks like:
-
-
 ![roi.jpeg](Screenshots%2Froi.jpeg)
-
 
 Then create objects that you want to digitize. Now it can be bulbs or just number panels (including float numbers like 18.1).
 Here You should point name, roi, init_value, frame and type. Type will be used in gui representation
 
         controlled_objects = []
         controlled_objects.append(
-            control_objects.Bulb(name="Pumper_1", coordinates=rois[0],
-                                      init_value=1, frame=frame, type=control_objects.ObjectsType.Binary)
+            control_objects.Bulb(name="bulb_1", coordinates=rois[0],
+                                      init_value=1, frame=frame, gui_type=gui.WidgetType.Binary)
         )
     
         controlled_objects.append(
-            control_objects.Bulb(name="Pumper_2", coordinates=rois[1],
-                                      init_value=0, frame=frame, type=control_objects.ObjectsType.Binary)
+            control_objects.Bulb(name="bulb_2", coordinates=rois[1],
+                                      init_value=0, frame=frame, gui_type=gui.WidgetType.Binary)
         )
+To see all available gui types, you can just print it directly:
+
+        print(gui.WidgetType)
 
 Create monitor which will manage the objects digitizing
 
@@ -72,14 +71,12 @@ Create monitor which will manage the objects digitizing
 
 And run the run managing loop
 
+    monitor = objects_handler.Monitor(image_processor)
     path = "data"
     monitor.run_loop(controlled_objects, show=True, telegram_api=None, log_path=path, log_every=2)
 
 If you do everything right, You will see such screen:
-
-
 ![two_status_data.jpeg](Screenshots%2Ftwo_status_data.jpeg)
-
 
 ## TelegramApi and Notificator
 You can create your own notifications. In the case of some Dangerous situation you will get message in Telegram.
@@ -105,3 +102,22 @@ Then create your own telegram api:
 And the pass this to monitor:
 
     monitor.run_loop(controlled_objects, show=True, telegram_api=telegram_api, log_path=path, log_every=2)
+
+## Writing Your Own Models
+To write your own model you should create class inheritor from class control_objects
+
+    from InspectVision.control_objects import ControlObject
+
+Then create subclass with one or two methods:
+
+    class SomeObject(ControlObject):
+        def _init_model(self):
+            your_own_model = YOUR_MODEL(self.init_value, self.init_image)
+            return your_own_model
+
+        def check_gui_type(self):
+            if self.gui_type is not gui.WidgetType.Binary:
+                warnings.warn("Git type for bulb must be Binary")
+
+The method _init_model is necessary. It returns model with method __call__ that takes image of detector and return value from it.
+The method check_gui_type is not necessary. it checks the right usage of gui_type
