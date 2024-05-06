@@ -102,6 +102,20 @@ Then create your own telegram api:
 And the pass this to monitor:
 
     monitor.run_loop(controlled_objects, show=True, telegram_api=telegram_api, log_path=path, log_every=2)
+    
+## Available Panels
+### Seven-segments number panels
+
+![images](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/6921fa36-3ab3-44bd-a2ba-4c1d28ec3410)
+
+![hEzCp](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/fb4ee765-4ab8-4286-bfa9-2562184d750b)
+
+![865-00](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/7bb54af8-577a-4c24-bdc6-1daafbdf47d7)
+
+ ### Binary status bulbs
+
+ ![bulb](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/6f9cf3ed-d098-4565-a518-8a4f06905ba9)
+
 
 ## Writing Your Own Models
 To write your own model you should create class inheritor from class control_objects
