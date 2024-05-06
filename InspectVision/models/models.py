@@ -6,7 +6,7 @@ import numpy as np
 from . import digits_detector
 
 
-class BaseProcessModel(ABC):
+class BaseProcessModel():
     def __init__(self, init_value: float, init_image: np.ndarray):
         self.init_value = init_value
         self.init_image = init_image
@@ -64,10 +64,10 @@ class BulbModel(BaseProcessModel):
 
     def _get_rel_bright(self, image: np.ndarray) -> float:
         """
-        :param image: the image of the object with shape (height, width) in (-0.5, 0.5)
+        :param image: the image of the object with shape (width, height) in (-0.5, 0.5)
         :return: the difference between max brightness and min brightness
         """
-        return (np.max(image) - np.min(image)) / np.max(image)
+        return np.max(image) - np.min(image)
 
     def forward(self, image: np.ndarray):
         """

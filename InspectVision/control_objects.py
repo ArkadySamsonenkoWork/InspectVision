@@ -1,18 +1,19 @@
-import cv2
+import warnings
+
 import numpy as np
-import scipy
 from skimage.metrics import structural_similarity as ssim
-from enum import Enum
+import typing as tp
 
 from . import models
+from . import gui
 
 
-from abc import ABC, abstractmethod
+class DigitizingModel(tp.Protocol):
+    def __init__(self, init_value: float, init_image: np.ndarray):
+        pass
 
-class ObjectsType(Enum):
-    Plot = 0
-    Display = 1
-    Binary = 2
+    def __call__(self, image: np.ndarray):
+        pass
 
 
 class Similarities:
@@ -37,13 +38,13 @@ class Similarities:
         similarity = ssim(image_1, image_2, multichannel=True)
         return similarity
 
-class ControlObject(ABC):
+
+class ControlObject:
     CONV_STEPS = 8
-    def __init__(self, coordinates: tuple[int, int, int, int], frame: np.ndarray, type: ObjectsType,
-                 init_value: float | None=None,
-                 name: str | None=None,
+    def __init__(self, coordinates: tuple[int, int, int, int], frame: np.ndarray, init_value: float,
+                 name: str, gui_type: gui.WidgetType,
                  weights_similarity: tuple[float, float] = (0.5, 0.5), min_similarity: float=0.7,
-                 delta_pixel: int=1,) -> None:
+                 delta_pixel: int=1, eps: float = 1e-2) -> None:
         """
         :param coordinates: square coordinates of an object
         :param frame: the picture from the camera. It has shape (height,width, channels). And values are float (0, 1) in RGB format by default
@@ -60,18 +61,38 @@ class ControlObject(ABC):
         self.init_value = init_value
         self.delta_pixel = delta_pixel
         self.delta_pixel = delta_pixel
-        self.type = type
+
         self.weights_similarity = weights_similarity
         self.min_similarity = min_similarity
-        self.name = name
         self.init_image = self._get_init_image(frame)
+
         self.current_similarity = 1.0
+        self.model = self._init_model()
+        self.previous_image = self.init_image # To avoid the model work for each frame
+        self.current_value: None | float = None
+        self.eps = eps
 
-        self._init_base_model()
+        self.__name = name
+        self.__gui_type = gui_type
 
-    @abstractmethod
-    def _init_base_model(self):
+    @property
+    def gui_type(self):
+        return self.__gui_type
+
+    @property
+    def name(self):
+        return self.__name
+
+    def _init_model(self):
+        raise NotImplementedError
+
+    def _check_gui_type(self) -> None:
+        """
+        Checker of gui_type that you used
+        :return:
+        """
         pass
+
     def _get_init_image(self, frame: np.ndarray) -> np.ndarray:
         x1 = self.init_coordinates[0]
         y1 = self.init_coordinates[1]
@@ -85,42 +106,6 @@ class ControlObject(ABC):
         structural = Similarities.structural_similarity(image, self.init_image)
         similarity = cross_correlation * self.weights_similarity[0] + structural * self.weights_similarity[1]
         return similarity
-
-    def get_object_position(self, frame: np.ndarray):
-        """
-        Finds the image in the picture that is most similar to the base object
-        :param frame: the picture from the camera Has shape (height,width, channels)
-        :return: None
-        """
-        raise NotImplementedError
-        channels = frame[0]
-        x_size = frame[1] - self.init_image[1] + 1
-        y_size = frame[2] - self.init_image[2] + 1
-        convs = np.empty(shape=(channels, x_size, y_size))
-        support_conv = np.ones_like(self.init_image)
-        frame_norm_tot = frame * frame
-        frame_norm_convs = np.empty_like(convs)
-        for channel in range(channels):
-            convs[channel] = scipy.signal.correlate2d(frame, self.init_image, "valid")
-            frame_norm_convs[channel] = scipy.signal.correlate2d(frame_norm_tot, support_conv, "valid")
-        full_dot_conv = convs.sum(axis=0)
-        init_picture_norm = np.linalg.norm(self.init_image)
-        similarities_matrix = full_dot_conv / (frame_norm_convs * init_picture_norm)
-        accepted_similarities = similarities_matrix >= self.min_similarity
-        if accepted_similarities.sum() > 1:
-            raise RuntimeError(f"Too many similarities greater than accepted similarity {self.min_similarity}")
-        elif accepted_similarities.sum() < 1:
-            raise RuntimeError(f"There are no similarities greater than accepted similarity {self.min_similarity}")
-        elif accepted_similarities.sum() == 1:
-            positions = np.where(accepted_similarities == True)
-            x, y = positions
-            x, y = x.item(), y.item()
-            x1 = x
-            y1 = y
-            x2 = x + self.init_image[1]
-            y2 = y + self.init_image[2]
-            self.current_coordinates = (x1, y1, x2, y2)
-            self.current_similarity = max(similarities_matrix)
 
     def update_similarity(self, frame: np.ndarray) -> None:
         """
@@ -162,7 +147,7 @@ class ControlObject(ABC):
         x_shifts = [2, 2, 0, -2, -2, -2, 0, 2]
         y_shifts = [0, 2, 2, 2, 0, -2, -2, -2]
         similarities = []
-        for step in range(ControlObject.CONV_STEPS):
+        for step in range(self.CONV_STEPS):
             x1_shifted = x1 + x_shifts[step]
             y1_shifted = y1 + y_shifts[step]
             x2_shifted = x2
@@ -180,16 +165,34 @@ class ControlObject(ABC):
             self.current_coordinates = (x1_shifted, y1_shifted, x2_shifted, y2_shifted)
         self.current_similarity = max(similarity_max, current_similarity)
 
+    def _get_value_flag(self, image):
+        flag_value = (self.current_value is None)
+        flag_image = np.any(abs(self.previous_image - image) >= self.eps)
+        return flag_value or flag_image
+
     def get_value(self, frame):
+        """
+        :param frame:
+        :return:
+        """
         image = self.get_current_image(frame)
-        value = self.base_model(image)
+        if self._get_value_flag(image):
+            value = self.model(image)
+        else:
+            value = self.current_value
         return value
 
 
 class Bulb(ControlObject):
-    def _init_base_model(self):
-        self.base_model = models.BulbModel(self.init_value, self.init_image)
+    def _init_model(self):
+        base_model = models.BulbModel(self.init_value, self.init_image)
+        return base_model
+
+    def check_gui_type(self):
+        if self.gui_type is not gui.WidgetType.Binary:
+            warnings.warn("Git type for bulb must be Binary")
 
 class LedDigits(ControlObject):
-    def _init_base_model(self):
-        self.base_model = models.LedNumbersModel(self.init_value, self.init_image)
+    def _init_model(self):
+        base_model = models.LedNumbersModel(self.init_value, self.init_image)
+        return base_model

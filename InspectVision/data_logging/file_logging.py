@@ -1,7 +1,7 @@
+import typing as tp
 import csv
 import os
 from datetime import datetime
-
 import warnings
 from pathlib import Path
 
@@ -19,7 +19,7 @@ class FileLogger:
         if not self._file.closed:
             self._file.close()
         self._file = open(file_path, "w", newline="")
-        writer = csv.DictWriter(self._file, delimiter="\t", fieldnames = ["time"] + [name for name in self.names])
+        writer = csv.DictWriter(self._file, delimiter="\t", fieldnames = self.names)
         writer.writeheader()
         return writer
 
@@ -36,43 +36,17 @@ class FileLogger:
         today = datetime.now()
         return f"{today.year}_{today.month}_{today.day}"
 
-    def _get_time(self) -> str:
-        time = datetime.now()
-        return f"{time.hour}_{time.minute}_{time.second}"
-
     def _data_updater(self):
         today = self._get_date_text()
         if today != self.current_date:
             self.current_date = today
             self.writer = self._create_get_writer()
 
-    def write_results(self, plots_data: dict, lcds_data: dict, binaries_data: dict):
+    def write_results(self, update_data: dict[str, tp.Any]):
         self._data_updater()
-        time = self._get_time()
-        result = {}
-        result.update({"time": time})
-        result.update(plots_data)
-        result.update(lcds_data)
-        result.update(binaries_data)
-        self.writer.writerow(result)
+        self.writer.writerow(update_data)
 
     def close(self):
         self._file.close()
 
 
-
-def main():
-    path = "data"
-    file_logger = FileLogger(subdir_path=path, names = ["1", "2"])
-    plots_data = {"1": 1}
-    lcds_data = {"2": 2}
-    file_logger.write_results(plots_data, lcds_data, {})
-    plots_data = {"1": 1}
-    lcds_data = {"2": 2}
-    file_logger.write_results(plots_data, lcds_data, {})
-    plots_data = {"1": 1}
-    lcds_data = {"2": 2}
-    file_logger.write_results(plots_data, lcds_data, {})
-
-if __name__=="__main__":
-    main()

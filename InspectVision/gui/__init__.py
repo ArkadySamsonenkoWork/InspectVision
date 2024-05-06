@@ -1,1 +1,1 @@
-from . import gui_monitor
+from .gui_monitor import GuiHandler, WidgetType
