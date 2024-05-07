@@ -3,7 +3,7 @@
 
 The program takes an instrument panel as input and returns its “digital” representation
 
-![result.png](Screenshots%2Fresult.jpeg)
+![result.png](Screenshots%2Fresult._upd.jpeg)
 
 
 ## Contents
