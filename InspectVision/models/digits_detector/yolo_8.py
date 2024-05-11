@@ -38,7 +38,7 @@ class YOLOv8:
 
     def prepare_input(self, image):
         self.img_height, self.img_width = image.shape[:2]
-
+        print(image)
         input_img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         # Resize input image

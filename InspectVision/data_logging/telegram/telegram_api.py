@@ -1,7 +1,9 @@
-import aiogram
 import typing as tp
-from ..notification import Notificator
+
 from aiogram import Bot, Dispatcher, executor, types
+
+from ..notification import Notificator
+
 
 class TelegramApi:
     def __init__(self, token:str, notificator:Notificator):
@@ -19,7 +21,8 @@ class TelegramApi:
         for user_id in self.users_collection:
             await self.bot.send_message(user_id, text)
 
-    async def update(self):
+    async def update(self, update_values: dict[str, tp.Any]):
+        self.notificator.update(update_values)
         text = self.notificator.aware()
         if not text:
             await self.send_messages(text)

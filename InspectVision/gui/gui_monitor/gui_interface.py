@@ -1,6 +1,7 @@
 from enum import Enum
 from dataclasses import dataclass
 from datetime import datetime
+import typing as tp
 
 import pyqtgraph as pg
 from PyQt6.QtCore import QCoreApplication, QMetaObject, QRect
@@ -40,6 +41,11 @@ def split_box(box: QRect, attitude: float = 0.6) -> tuple[QRect, QRect]:
     return box_1, box_2
 
 
+class WidgetInterface(QWidget):
+    def display(self, data: tp.Any):
+        pass
+
+
 class BinaryStatusWidget(QWidget):
     def __init__(self, centralwidget: QWidget) -> None:
         super().__init__(centralwidget)
@@ -54,8 +60,8 @@ class BinaryStatusWidget(QWidget):
     def set_name(self, name: str):
         self.lineEdit_name.setText(QCoreApplication.translate("MainWindow", name, None))
 
-    def display(self, status: bool):
-        if status:
+    def display(self, data: bool):
+        if data:
             self.lineEdit_status.setStyleSheet(u"background-color: rgb(0, 100, 0);\n"
                                                 "color: rgb(255, 255, 255);\n")
             self.lineEdit_status.setText(QCoreApplication.translate("MainWindow", "ON", None))
@@ -71,27 +77,23 @@ class BinaryStatusWidget(QWidget):
 
 
 class PlotWidget(pg.PlotWidget):
-    def __init__(self, central_widget: QWidget, title: str, time_delta:float=6,*args, **kwargs):
-        super().__init__(central_widget, title, *args, **kwargs)
+    def __init__(self, central_widget: QWidget, title: str, time_delta: float=6):
+        super().__init__(central_widget, title=title)
         self.time_delta = time_delta * 60 * 60  # To seconds
-        self.seconds = datetime.now().timestamp()
+        self.setLabel("bottom", "Time (minutes)")
+        self.addLegend()
+        self.showGrid(x=True, y=True)
+        self.previous_data = datetime.now()
+        self.data = {"x": [], "y": []}
 
-    def get_x_value(self, hour_min_sec: str):
-        timing = datetime.strptime(hour_min_sec, "%H_%M_%S")
-        hour = timing.hour
-        minute = timing.minute
-        second = timing.second
-        value = hour * 60 * 60 + minute * 60 + second
-        return {value: f"{hour}_{minute}"}
+        axis = pg.DateAxisItem()
+        self.setAxisItems({'bottom': axis})
 
-    def display(self, data: tuple[str, float]):
-        now = datetime.now().timestamp()
-        if now - self.seconds >= self.time_delta:
-            self.clear()
-            self.seconds = now
-        timing = self.get_x_value(data[0])
-        value = data[1]
-        self.plot(timing, value, symbol="o")
+    def display(self, data: tuple[datetime, float]):
+        if (data[0] - self.previous_data).total_seconds() >= self.time_delta:
+            self.data["x"].pop(0), self.data["y"].pop(0)
+        self.data["x"].append(data[0].timestamp()), self.data["y"].append(data[1])
+        self.plot(self.data["x"], self.data["y"], clear=True)
 
 
 class TitledLCDWidget(QWidget):
@@ -112,8 +114,8 @@ class TitledLCDWidget(QWidget):
     def set_name(self, name: str) -> None:
         self.lineEdit_name.setText(QCoreApplication.translate("MainWindow", name, None))
 
-    def display(self, x: str | float) -> None:
-        self.lcdNumber.display(x)
+    def display(self, data: str | float) -> None:
+        self.lcdNumber.display(data)
 
     def setReadOnly(self, read_only: bool) -> None:
         self.lineEdit_name.setReadOnly(read_only)
@@ -253,7 +255,7 @@ class Ui_WindowBuilder:
         return self._get_double_widget_box(line, column)
 
 
-    def _get_widgets(self, widgets_factory: WidgetsBuilder, centralwidget: QWidget) -> dict[str, QWidget]:
+    def _get_widgets(self, widgets_factory: WidgetsBuilder, centralwidget: QWidget) -> dict[str, WidgetInterface]:
         plots =\
             {name: widgets_factory.get_plot(centralwidget, self._get_plot_box(i), title=name)
             for i, name in enumerate(self.plots_name)}
@@ -299,7 +301,7 @@ class Ui_WindowBuilder:
 
 class Ui_MainWindow():
     def setupUi(self, screen_view: QLabel,
-                widgets: dict[str, QWidget]) -> None:
+                widgets: dict[str, WidgetInterface]) -> None:
         self.screenView = screen_view
         self.widgets = widgets
 

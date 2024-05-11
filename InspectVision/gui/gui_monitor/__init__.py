@@ -1,2 +1,2 @@
 from .gui_control import GuiHandler
-from .gui_interface import WidgetType
+from .gui_interface import WidgetType, WidgetInterface

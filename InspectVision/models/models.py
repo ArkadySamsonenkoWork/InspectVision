@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import typing as tp
+from matplotlib import pyplot as plt
 
 import numpy as np
 
@@ -88,7 +89,7 @@ class LedNumbersModel(BaseProcessModel):
     """
     def __init__(self, init_value: float, init_image: np.ndarray):
         super().__init__(init_value, init_image)
-        path = "models/digits_detector/yolo_digits.onnx"
+        path = "InspectVision/models/digits_detector/yolo_digits.onnx"
         self.yolov8_detector = digits_detector.YOLOv8(path, conf_thres=0.2, iou_thres=0.3)
 
         if self(init_image) != str(init_value):
@@ -100,7 +101,7 @@ class LedNumbersModel(BaseProcessModel):
         :param height:  the height of image for transformation
         :return: transformed image with shape (height, width, channels) in (0, 1)
         """
-        transformed_image = image.copy()
+        transformed_image = (image.copy() * 255).astype(np.uint8)
         return transformed_image
 
 
@@ -109,6 +110,7 @@ class LedNumbersModel(BaseProcessModel):
         positions = [box[0] for box in boxes]
         number = "".join([digits_detector.CLASS_NAMES[class_id] for _, class_id in sorted(zip(positions, class_ids))])
         print(number)
+        print(1)
         return number
 
 

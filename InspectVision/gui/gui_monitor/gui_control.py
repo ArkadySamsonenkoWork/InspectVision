@@ -14,7 +14,7 @@ from .gui_interface import Ui_WindowBuilder, WidgetType
 class WindowUpdater(QtCore.QObject):
     data_recieved = QtCore.pyqtSignal(dict)
     screen_recieved = QtCore.pyqtSignal(np.ndarray)
-    def emit_data(self, update_data):
+    def emit_data(self, update_data: dict[str, tp.Any]):
         self.data_recieved.emit(update_data)
 
     def emit_screen(self, frame: np.ndarray):
