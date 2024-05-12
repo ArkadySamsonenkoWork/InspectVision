@@ -19,6 +19,7 @@ The program takes an instrument panel as input and returns its “digital” rep
      - [LCDS number]
      - [Binary Status]
   - [Writing Own Models]
+  - [Warning]
 
 ## Requirements
   - [Python (3.9+)]
@@ -145,3 +146,7 @@ Then create subclass with one or two methods:
 
 The method _init_model is necessary. It returns model with method __call__ that takes image of detector and return value from it.
 The method check_gui_type is not necessary. it checks the right usage of gui_type
+
+## Warning
+
+Unfortunately, some models are too large to fit into the github. However, you can download them from the link https://disk.yandex.ru/d/XPGHO5yS6oGRDA
