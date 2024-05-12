@@ -3,7 +3,7 @@
     build-backend = "setuptools.build_meta"
 
 [project]
-    name = "InspectVision"
+    name = "inspect_vision"
     version = "0.1_b"
     description = "A library for monitoring detectors, sensors and digitizing data from them"
     authors = [
