@@ -38,9 +38,9 @@ Install from the source directory:
 
 Import everything you need:
 
-    from InspectVision import gui, handlers, managing
-    from InspectVision.processing import image_processing
-    from InspectVision.data_logging import Notificator, TelegramApi
+    from inspect_vision import gui, handlers, managing
+    from inspect_vision.processing import image_processing
+    from inspect_vision.data_logging import Notificator, TelegramApi
 
 Run ImageProcessor that will handle your camera:
 
@@ -94,7 +94,7 @@ If you do everything right, You will see such screen:
 You can create your own notifications. In the case of some dangerous situation you will get message in Telegram.
 To do this, import Base class Notificator and create its sublass with method check_conditions
 
-    from InpectVison.data_logging import Notificator
+    from inspect_vision.data_logging import Notificator
 
     class ChillerNotificator(Notificator):
         def check_conditions(self):
@@ -108,7 +108,7 @@ And then in code create your notificator:
 
 Then create your own telegram api:
 
-    from InpectVison.data_logging import TelegramApi
+    from inspect_vision.data_logging import TelegramApi
     telegram_api = TelegramApi(token="some_toke_from_BotFather", notificator=notificator)
 
 And pass this to monitor:
@@ -131,7 +131,7 @@ And pass this to monitor:
 ## Writing Your Own Models
 To write your own model you should create class inheritor from class control_objects
 
-    from InspectVision.handlers import ControlObject
+    from inspect_vision.handlers import ControlObject
 
 Then create subclass with one or two methods:
 
