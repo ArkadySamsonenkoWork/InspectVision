@@ -118,15 +118,14 @@ And pass this to monitor:
 ### Seven-segments number panels
 
 
-![images](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/6921fa36-3ab3-44bd-a2ba-4c1d28ec3410)
+![digits_display](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/319324e2-444d-42e6-9c90-261a983b49a9)
 
 
  ### Binary status bulbs
 
 
- ![bulb](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/6f9cf3ed-d098-4565-a518-8a4f06905ba9)
+![bulbs](https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/c2b67c9e-7f32-4125-9c42-121ac69259b4)
 
- 
 
 ## Writing Your Own Models
 To write your own model you should create class inheritor from class control_objects
