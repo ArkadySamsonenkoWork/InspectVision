@@ -38,7 +38,7 @@ Install from the source directory:
 
 Import everything you need:
 
-    from InspectVision import gui, control_objects, objects_handler
+    from InspectVision import gui, handlers, managing
     from InspectVision.processing import image_processing
     from InspectVision.data_logging import Notificator, TelegramApi
 
@@ -61,12 +61,12 @@ Here, you should point name, roi, init_value, frame and type. Type will be used 
 
         controlled_objects = []
         controlled_objects.append(
-            control_objects.Bulb(name="bulb_1", coordinates=rois[0],
+            handlers.Bulb(name="bulb_1", coordinates=rois[0],
                                       init_value=1, frame=frame, gui_type=gui.WidgetType.Binary)
         )
     
         controlled_objects.append(
-            control_objects.Bulb(name="bulb_2", coordinates=rois[1],
+            handlers.Bulb(name="bulb_2", coordinates=rois[1],
                                       init_value=0, frame=frame, gui_type=gui.WidgetType.Binary)
         )
 	
@@ -76,7 +76,7 @@ To see all available gui types, you can just print it directly:
 
 Create monitor which manages the objects digitizing
 
-    monitor = objects_handler.Monitor(image_processor))
+    monitor = managing.Monitor(image_processor))
 
 And run the loop.
 
@@ -98,7 +98,7 @@ To do this, import Base class Notificator and create its sublass with method che
 
     class ChillerNotificator(Notificator):
         def check_conditions(self):
-            condition = self.controlled_objects[0] > 17.8
+            condition = self.controlled_objects["high_temperature_detector"] > 17.8
             message = "The water temerature is too hight!!!!!"
             return condition, message
 
@@ -131,7 +131,7 @@ And pass this to monitor:
 ## Writing Your Own Models
 To write your own model you should create class inheritor from class control_objects
 
-    from InspectVision.control_objects import ControlObject
+    from InspectVision.handlers import ControlObject
 
 Then create subclass with one or two methods:
 
