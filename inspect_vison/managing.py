@@ -225,8 +225,8 @@ class Monitor:
             control_object.update_similarity(frame)
             similarity = control_object.current_similarity
             if similarity < control_object.min_similarity:
-                print(1)
-                raise RuntimeError(f"similarity for object {control_object.name} is too low {similarity}")
+                warnings.warn(f"similarity for object {control_object.name} is too low {similarity}")
+                #raise RuntimeError
 
     def collect_object_values(self, frame: np.ndarray,
                                control_objects: tp.Iterable[handlers.ControlObject]):
