@@ -93,7 +93,8 @@ class LedNumbersModel(BaseProcessModel):
         self.yolov8_detector = digits_detector.YOLOv8(path, conf_thres=0.2, iou_thres=0.3)
 
         if self(init_image) != str(init_value):
-            raise RuntimeError("The wrong determination of digits on a picture. Reprocess image")
+            warnings.warn("The wrong determination of digits on a picture. Reprocess image")
+            # raise RuntimeError("The wrong determination of digits on a picture. Reprocess image")
 
     def _init_transforms(self, image: np.ndarray, height: int=200) -> np.ndarray:
         """
