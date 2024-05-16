@@ -8,6 +8,7 @@ The program takes an instrument panel as input and returns its “digital” rep
 
 ## Contents
   - [Requirements]
+  - [Short Video]
   - [Basic usage]
   - [Notification]
   - [TelegramApi and Notificator]
@@ -28,7 +29,16 @@ The program takes an instrument panel as input and returns its “digital” rep
   - [Numpy]
   - [PyQt6]
   - [Aiogram] for running telegram bots 
-  - [Pyqtgraph] 
+  - [Pyqtgraph]
+
+
+## Short video of work
+
+
+
+https://github.com/ArkadySamsonenkoWork/InspectVision/assets/153271915/ded31072-fc33-458c-b603-ed088ad7a237
+
+
 
 ## Basic usage
 
